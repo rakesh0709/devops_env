@@ -12,7 +12,7 @@ from openenv.core import EnvClient
 from openenv.core.client_types import StepResult
 from openenv.core.env_server.types import State
 
-from .models import DevopsAction, DevopsObservation
+from models import DevopsAction, DevopsObservation
 
 
 class DevopsEnv(
@@ -55,7 +55,7 @@ class DevopsEnv(
             Dictionary representation suitable for JSON encoding
         """
         return {
-            "message": action.message,
+            "command": action.command,
         }
 
     def _parse_result(self, payload: Dict) -> StepResult[DevopsObservation]:
@@ -70,8 +70,9 @@ class DevopsEnv(
         """
         obs_data = payload.get("observation", {})
         observation = DevopsObservation(
-            echoed_message=obs_data.get("echoed_message", ""),
-            message_length=obs_data.get("message_length", 0),
+            terminal_output=obs_data.get("terminal_output", ""),
+            current_alert=obs_data.get("current_alert", "None"),
+            server_status=obs_data.get("server_status", {}),
             done=payload.get("done", False),
             reward=payload.get("reward"),
             metadata=obs_data.get("metadata", {}),
